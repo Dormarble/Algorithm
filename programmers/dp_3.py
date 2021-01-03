@@ -1,20 +1,36 @@
+from collections import deque
 
-def solution(m,n,puddles):
-    grid = [[0]*(m+1) for i in range(n+1)] #왼쪽, 위로 한줄씩 만들어서 IndexError 방지
-    if puddles != [[]]:                    #물이 잠긴 지역이 0일 수 있음
-        for a, b in puddles:
-            grid[b][a] = -1                #미리 -1로 체크
-    grid[1][1] = 1
-    for j in range(1,n+1):
-        for k in range(1,m+1):
-            if j == k == 1:                #(1,1)은 1로 만들어두고, 0이 되지 않도록
-                continue
-            if grid[j][k] == -1:           #웅덩이는 0으로 만들어 다음 덧셈 때 영향끼치지 않게
-                grid[j][k] = 0
-                continue
-            grid[j][k] = (grid[j][k-1] + grid[j-1][k])%1000000007   #[a,b] = [a-1,b] + [a,b-1] 공식
+mx = [0, 0, 1, -1]
+my = [-1, 1, 0, 0]
 
-    return grid[n][m]
+def solution(m, n, puddles):
+    board = [[0]*m for _ in range(n)]
+    for puddle in puddles:
+        board[puddle[1]-1][puddle[0]-1] = 1
+
+    q = deque()
+    c = [[0]*m for _ in range(n)]
+    r = [[-1]*m for _ in range(n)]
+    c[0][0] = 1         # 최단 경로 개수
+    r[0][0] = 1         # 최단 거리
+    q.append((0, 0))
+    while q:
+        x, y = q.popleft()       
+
+        for i in range(4):
+            nx = x + mx[i]
+            ny = y + my[i]
+
+            if 0<=nx and nx<n and 0<=ny and ny<m and board[nx][ny] == 0:
+                if r[nx][ny] < 0:
+                    r[nx][ny] = r[x][y] + 1
+                    c[nx][ny] = c[x][y]
+                    q.append((nx, ny))
+                else:
+                    if r[nx][ny] == r[x][y] + 1:
+                        c[nx][ny] += c[x][y]
+    
+    return c[n-1][m-1] % 1000000007
 
 
 print(solution(6, 5, [[2, 2], [3, 2], [1, 3], [5, 1], [5, 2], [5, 3], [3, 4], [4, 4]]))

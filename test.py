@@ -1,66 +1,62 @@
-def solution(tickets):
-    s = set()
-    path = []
-    for ticket in tickets:
-        s.add(ticket[0])
-        s.add(ticket[1]) 
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+
+#
+# Complete the 'order' function below.
+#
+# The function is expected to return an INTEGER_ARRAY.
+# The function accepts following parameters:
+#  1. UNWEIGHTED_INTEGER_GRAPH city
+#  2. INTEGER company
+#
+
+#
+# For the unweighted graph, <name>:
+#
+# 1. The number of nodes is <name>_nodes.
+# 2. The number of edges is <name>_edges.
+# 3. An edge exists between <name>_from[i] and <name>_to[i].
+#
+#
+
+from collections import deque
+
+def order(city_nodes, city_from, city_to, company):
+    visit = [False] * (city_nodes + 1)
     
-    cities = list(s)
-    cities.sort()
+    graph = [[] for _ in range(city_nodes + 1)]
+    for a, b in zip(city_from, city_to):
+        graph[a].append(b)
+        graph[b].append(a)
     
-    cityToIdx = {}
-    for i, city in enumerate(cities):
-        cityToIdx[city] = i
-    print(cityToIdx)
-    adjList = createAdjList(tickets, cityToIdx)
-    
-
-
-    dfs(cityToIdx["ICN"], adjList, path, 0, len(tickets))
-    answer = []
-    for i in path:
-        answer.append(cities[i])
-    return answer
-
-def dfs(city, adjList, path, ticketNum, totalNum):
-    path1 = path
-    result = True
-    if ticketNum == totalNum:
-        return path1, True
-    path1.append(city)
-    isUsed = [0]*len(adjList[city])
-    print(city, path1, ticketNum)
-    for i, dest in enumerate(adjList[city]):
-        if isUsed[i] == 0:
-            isUsed[i] = 1 
-            path1, d = dfs(dest, adjList, path1, ticketNum+1, totalNum)
-            if d :
-                result = True
-            else:
-                path1 = path1[:-2]
-                isUsed[i] = 0
-                result = False
-    return path1, result
-
-
-
-
-def createAdjList(tickets, cityToIdx):
-    adjList = []
-    for _ in range(len(cityToIdx)):
-        adjList.append([])
-    for ticket in tickets:
-        start = cityToIdx[ticket[0]]
-        desti = cityToIdx[ticket[1]]
+    for i in range(city_nodes):
+        graph[i].sort()
         
-        adjList[start].append(desti)
+    result = []
+    tmp = [company]
+    visit[company] = True
+    while tmp:
+        q = deque(tmp)
+        tmp = []
+        while q:
+            cur = q.popleft()
+            
+            for n in graph[cur]:
+                if not visit[n]:
+                    visit[n] = True
+                    tmp.append(n)
+
+        tmp.sort()
+        for i in tmp:
+            result.append(i)
+            
+    return result
+
     
-    for arr in adjList:
-        arr.sort()
-    return adjList
-
-
-tickets = [["ICN", "COO"], ["ICN", "BOO"], ["COO", "ICN"], ["BOO", "DOO"]]
-d = solution(tickets)
-
-print(d)
+print(order(5, [1, 1, 1, 2, 3], [2, 3, 5, 4, 5], 1))

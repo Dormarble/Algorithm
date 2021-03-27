@@ -15,3 +15,26 @@ while len(cards) != 1:
     sum += s
 
 print(sum);
+
+
+
+
+# import sys
+# import heapq
+
+# input = sys.stdin.readline
+
+# N = int(input())
+# q = []
+# for _ in range(N):
+#     heapq.heappush(q, int(input()))
+
+# result = 0
+# while len(q) != 1:
+#     a = heapq.heappop(q)
+#     b = heapq.heappop(q)
+#     heapq.heappush(q, a+b)
+
+#     result += a+b
+
+# print(result)

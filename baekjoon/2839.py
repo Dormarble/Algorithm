@@ -1,17 +1,24 @@
-n = int(input())
+import sys
+sys.setrecursionlimit(10**6)
 
-answer = -1
-count = int(n/5)
+N = int(input())
 
-for i in range(count, -1, -1):
-    remain = n - 5*i
+dp = [-1]*(N+1)
 
-    if remain % 3 == 0:
-        answer = i
-        break
+def dfs(n):
+    if n < 0:
+        return 10000000
+    if dp[n] > 0:
+        return dp[n]
+    if n==3 or n==5:
+        return 1
 
-if answer == -1:
-    print(answer)
-else:
-    answer += int((n-5*answer) / 3)
-    print(answer)
+    dp[n] = min(dfs(n-5), dfs(n-3)) + 1
+
+    return dp[n]
+
+result = dfs(N)
+if result > 100000:
+    result = -1
+
+print(result)
